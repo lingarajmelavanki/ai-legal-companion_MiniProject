@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lexora-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - SECRET_KEY=${SECRET_KEY:-replace-with-a-secure-random-secret-key}
+      - DATABASE_URL=sqlite:////app/lexora.db
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - DEFAULT_LLM_MODEL=gemini-1.5-flash
+    volumes:
+      - lexora-uploads:/app/uploads
+      - lexora-reports:/app/reports
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lexora-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  lexora-uploads:
+  lexora-reports:

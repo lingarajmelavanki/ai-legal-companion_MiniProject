@@ -1,0 +1,40 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Local Databases
+*.db
+*.sqlite
+*.sqlite3
+backend/lexora.db
+
+# Runtime User Uploads & Generated Reports
+backend/uploads/
+backend/reports/
+
+# Python Virtual Environments & Caches
+venv/
+.venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Node.js & Next.js Build Artifacts
+node_modules/
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+
+# Logs & OS / IDE Files
+*.log
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

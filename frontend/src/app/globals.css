@@ -1,0 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,300..700;1,6..72,300..700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-paper: #F3EBDD;
+  --forest-green: #173D32;
+  --forest-mid: #315D49;
+  --copper: #B77B50;
+  --charcoal: #252B29;
+  --muted-text: #77766E;
+  --paper-card: #FAF6F0;
+  --white: #FFFFFF;
+}
+
+body {
+  background-color: var(--bg-paper);
+  color: var(--charcoal);
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, .font-serif {
+  font-family: 'Newsreader', Georgia, serif;
+}
+
+/* Paper Deckle Border Effect */
+.paper-deckle {
+  border: 1px solid rgba(184, 174, 159, 0.45);
+  box-shadow: 0 2px 8px rgba(37, 43, 41, 0.04);
+}
+
+/* Editorial subtle borders */
+.editorial-border {
+  border-color: #D8D0C3;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #EAE1D1;
+}
+::-webkit-scrollbar-thumb {
+  background: #C4B9A7;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #A49783;
+}
+
+/* Selection */
+::selection {
+  background-color: #E6D4C0;
+  color: #173D32;
+}

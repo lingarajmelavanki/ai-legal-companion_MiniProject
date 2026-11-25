@@ -1,0 +1,31 @@
+NON-DISCLOSURE AND CONFIDENTIALITY AGREEMENT
+
+This Non-Disclosure Agreement (this "Agreement") is executed on this 10th day of March 2026, by and between:
+
+Nexis Technologies LLP, having its principal place of business at Cyber City, Gurugram, Haryana (hereinafter "Disclosing Party");
+AND
+Vanguard Creative Studio, having its office at Indiranagar, Bengaluru (hereinafter "Receiving Party").
+
+WHEREAS, the parties desire to explore a strategic commercial collaboration relating to proprietary artificial intelligence platforms and need to disclose proprietary business information;
+
+NOW IT IS AGREED as follows:
+
+1. DEFINITION OF CONFIDENTIAL INFORMATION
+"Confidential Information" shall include all technical data, customer lists, algorithms, source code, financial projections, business models, and trade secrets disclosed either orally or in writing.
+
+2. OBLIGATIONS OF RECEIVING PARTY
+The Receiving Party shall hold and maintain the Confidential Information in strictest confidence and shall not disclose or disseminate such information to any third party without prior written consent. The Receiving Party shall exercise the highest degree of care.
+
+3. PERPETUAL TERM OF CONFIDENTIALITY
+The duty of confidentiality and non-use under this Agreement shall continue in perpetuity and shall survive indefinitely without any limitation of time.
+
+4. INDEMNITY
+The Receiving Party shall indemnify and hold harmless the Disclosing Party against all losses, legal costs, reputational damages, and claims arising directly or indirectly from any alleged disclosure of Confidential Information.
+
+5. INJUNCTIVE RELIEF
+The Receiving Party agrees that any breach may cause irreparable harm for which monetary compensation is inadequate, entitling the Disclosing Party to seek immediate injunctive relief in any court of competent jurisdiction.
+
+IN WITNESS WHEREOF, the parties hereto have signed this Agreement.
+
+DISCLOSING PARTY: Nexis Technologies LLP
+RECEIVING PARTY: Vanguard Creative Studio

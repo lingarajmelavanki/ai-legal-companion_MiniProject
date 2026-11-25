@@ -1,0 +1,35 @@
+EMPLOYMENT AGREEMENT AND SERVICE BOND
+
+This Employment Agreement (the "Agreement") is made effective as of 15th February 2026, by and between:
+
+ApexCore Innovations Private Limited, a company incorporated under the Companies Act, with registered office at Koramangala, Bengaluru (hereinafter referred to as the "Company");
+AND
+Mr. Arjun Rao, residing at Jayanagar, Bengaluru (hereinafter referred to as the "Employee").
+
+NOW, THEREFORE, the parties mutually agree as follows:
+
+1. POSITION AND RESPONSIBILITIES
+The Employee is appointed as Associate Full-Stack Software Engineer. The Employee agrees to perform all duties assigned by the Company with utmost diligence. The Employee agrees to be available on-call 24 hours a day, 7 days a week, including weekends and public holidays, without extra overtime compensation.
+
+2. COMPENSATION AND REMUNERATION
+The Employee shall receive a gross annual CTC of INR 7,50,000/- payable in monthly installments by the last working day of each month.
+
+3. MANDATORY 3-YEAR SERVICE BOND AND TRAINING COST RECOVERY
+The Employee expressly agrees to a mandatory minimum service period of 36 (thirty-six) months from the date of joining. If the Employee resigns, abandons duty, or is terminated for misconduct before the completion of 36 months, the Employee shall pay INR 5,00,000/- as liquidated damages to reimburse the entire training cost and operational disruptions incurred by the Company.
+
+4. POST-EMPLOYMENT NON-COMPETE AND RESTRAINT OF TRADE
+The Employee covenants that upon cessation of employment for any reason whatsoever, the Employee shall not directly or indirectly engage in, work for, consult, or render services to any competing technology company or startup operating in the cloud or software sector for a period of 24 (twenty-four) months anywhere in India.
+
+5. NON-SOLICITATION OF CLIENTS AND PERSONNEL
+The Employee shall not solicit, divert, or conduct business with any client or partner of the Company for a period of 36 months post-departure.
+
+6. PROPRIETARY RIGHTS AND COMPLETE ASSIGNMENT OF INVENTIONS
+The Employee assigns to the Company all worldwide rights, title, and interest in all inventions, code, designs, algorithms, and writings created during employment, including any personal software projects developed on personal time or home equipment during the term of employment.
+
+7. IMMEDIATE TERMINATION BY COMPANY
+The Company may terminate this Agreement immediately without notice or severance pay if the Employee fails to meet performance expectations as determined by the Company in its sole discretion. The Employee must provide 90 days notice for voluntary resignation.
+
+IN WITNESS WHEREOF, the Company and Employee have set their hands on the date first mentioned.
+
+APEXCORE INNOVATIONS PVT LTD
+EMPLOYEE: Arjun Rao
