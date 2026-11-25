@@ -42,7 +42,13 @@ async def analyze_document(
     db.commit()
 
     # Run AI analysis
-    ai_result = await AIEngine.analyze_document(chunks_data, doc.category)
+    try:
+        ai_result = await AIEngine.analyze_document(chunks_data, doc.category)
+    except Exception as e:
+        db.rollback()
+        doc.status = "failed"
+        db.commit()
+        raise HTTPException(status_code=500, detail=f"Document analysis failed: {str(e)}")
 
     # Save AnalysisResult
     analysis_record = AnalysisResult(
@@ -93,6 +99,7 @@ async def analyze_document(
     doc.status = "analyzed"
     db.commit()
     db.refresh(analysis_record)
+    db.refresh(doc)
 
     # Construct response
     return AnalysisResultResponse(

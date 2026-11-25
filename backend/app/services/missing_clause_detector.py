@@ -159,6 +159,72 @@ class MissingClauseDetector:
                 "why_it_matters_hi": "अतिरिक्त काम के लिए लिखित सहमति और अतिरिक्त शुल्क अनिवार्य करके मुफ्त काम करवाने से बचाता है।",
                 "recommended_standard_language": "Any modifications to the Statement of Work shall be documented in a written Change Order specifying additional timeline and compensation prior to commencement."
             }
+        ],
+
+        "Consumer Loan Agreement": [
+            {
+                "clause_name": "Transparent APR, Interest Calculation & Hidden Fee Disclosure",
+                "patterns": [r"annual\s+percentage\s+rate", r"apr\b", r"interest\s+calculation", r"processing\s+fee"],
+                "clause_type": "Statutory Mandatory",
+                "importance_level": "Critical",
+                "why_it_matters_en": "Requires the lender to disclose the exact Annual Percentage Rate (APR), compounding frequency, and all upfront/hidden processing fees before loan disbursal.",
+                "why_it_matters_kn": "ಸಾಲ ವಿತರಣೆಯ ಮೊದಲು ನಿಖರವಾದ ವಾರ್ಷಿಕ ಬಡ್ಡಿ ದರ (APR) ಮತ್ತು ಎಲ್ಲಾ ಸಂಸ್ಕರಣಾ ಶುಲ್ಕಗಳನ್ನು ಸ್ಪಷ್ಟವಾಗಿ ಬಹಿರಂಗಪಡಿಸುವುದನ್ನು ಕಡ್ಡಾಯಗೊಳಿಸುತ್ತದೆ.",
+                "why_it_matters_hi": "ऋण वितरण से पहले सटीक वार्षिक ब्याज दर (APR) और सभी प्रोसेसिंग शुल्क का स्पष्ट खुलासा अनिवार्य करता है।",
+                "recommended_standard_language": "The Lender shall provide a Key Fact Statement disclosing the exact Annual Percentage Rate (APR), total interest payable, and all processing or administrative fees prior to execution."
+            },
+            {
+                "clause_name": "Zero or Capped Prepayment / Foreclosure Penalty",
+                "patterns": [r"prepayment", r"foreclosure\s+(?:charges|penalty|fee)", r"early\s+repayment"],
+                "clause_type": "Regulatory Standard",
+                "importance_level": "High",
+                "why_it_matters_en": "Protects borrowers from punitive penalties when repaying a floating-rate or personal loan ahead of schedule.",
+                "why_it_matters_kn": "ಅವಧಿಗೂ ಮುನ್ನ ಸಾಲ ಮರುಪಾವತಿಸುವಾಗ ವಿಧಿಸುವ ಭಾರಿ ದಂಡದಿಂದ ಸಾಲಗಾರರನ್ನು ರಕ್ಷಿಸುತ್ತದೆ.",
+                "why_it_matters_hi": "समय से पहले ऋण चुकाने पर लगने वाले भारी जुर्माने से उधारकर्ता की सुरक्षा करता है।",
+                "recommended_standard_language": "The Borrower may prepay or foreclose the loan in full or in part after six (6) EMIs without any prepayment penalty on floating-rate facilities."
+            },
+            {
+                "clause_name": "Default Grace Period & Written Cure Notice",
+                "patterns": [r"grace\s+period", r"notice\s+of\s+default", r"cure\s+period"],
+                "clause_type": "Commercial Standard",
+                "importance_level": "High",
+                "why_it_matters_en": "Ensures the lender gives written notice and a short grace period (e.g. 7-15 days) to rectify a missed EMI before triggering acceleration or penal interest.",
+                "why_it_matters_kn": "ತಪ್ಪಿದ ಕಂತನ್ನು ಸರಿಪಡಿಸಲು ದಂಡ ಬಡ್ಡಿ ವಿಧಿಸುವ ಮೊದಲು ಲಿಖಿತ ಸೂಚನೆ ಮತ್ತು ಕಾಲಾವಕಾಶ ನೀಡುವುದನ್ನು ಖಚಿತಪಡಿಸುತ್ತದೆ.",
+                "why_it_matters_hi": "ईएमआई चूकने पर दंडात्मक ब्याज लगाने से पहले लिखित सूचना और सुधार अवधि सुनिश्चित करता है।",
+                "recommended_standard_language": "Upon any payment delay, the Lender shall issue a written notice granting a fifteen (15) day cure period before declaring an Event of Default or accelerating the principal."
+            }
+        ],
+
+        "General Legal Contract": [
+            {
+                "clause_name": "Mutual Termination & Reasonable Notice Period",
+                "patterns": [r"(?:either\s+party\s+may\s+terminate|mutual\s+termination)", r"\d+\s+days.{0,20}written\s+notice"],
+                "clause_type": "Commercial Standard",
+                "importance_level": "High",
+                "why_it_matters_en": "Ensures both parties have a clear, fair exit mechanism with advance written notice rather than being locked in indefinitely.",
+                "why_it_matters_kn": "ಉಭಯ ಪಕ್ಷಗಳಿಗೂ ಮುಂಚಿತ ಲಿಖಿತ ಸೂಚನೆಯೊಂದಿಗೆ ಒಪ್ಪಂದದಿಂದ ಹೊರಬರುವ ನ್ಯಾಯಯುತ ಅವಕಾಶವನ್ನು ಖಚಿತಪಡಿಸುತ್ತದೆ.",
+                "why_it_matters_hi": "दोनों पक्षों को अग्रिम लिखित सूचना के साथ अनुबंध समाप्त करने का निष्पक्ष अधिकार सुनिश्चित करता है।",
+                "recommended_standard_language": "Either party may terminate this Agreement for convenience by providing thirty (30) days prior written notice to the other party."
+            },
+            {
+                "clause_name": "Limitation of Liability Cap",
+                "patterns": [r"limitation\s+of\s+liability", r"aggregate\s+liability\s+shall\s+not\s+exceed", r"cap\s+on\s+liability"],
+                "clause_type": "Commercial Standard",
+                "importance_level": "Critical",
+                "why_it_matters_en": "Prevents unlimited personal financial exposure by capping total damages at the fees paid under the contract.",
+                "why_it_matters_kn": "ಒಪ್ಪಂದದ ಮೌಲ್ಯಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಒಟ್ಟು ನಷ್ಟದ ಹೊಣೆಗಾರಿಕೆಯನ್ನು ಮಿತಿಗೊಳಿಸುವ ಮೂಲಕ ಅನಿಯಮಿತ ಆರ್ಥಿಕ ಅಪಾಯವನ್ನು ತಡೆಯುತ್ತದೆ.",
+                "why_it_matters_hi": "अनुबंध मूल्य के भीतर कुल देनदारी को सीमित करके असीमित वित्तीय जोखिम से बचाता है।",
+                "recommended_standard_language": "Neither party's aggregate liability arising out of this Agreement shall exceed the total fees paid or payable during the preceding twelve (12) months."
+            },
+            {
+                "clause_name": "Governing Law & Dispute Resolution Venue",
+                "patterns": [r"governing\s+law", r"jurisdiction", r"arbitration", r"dispute\s+resolution"],
+                "clause_type": "Legal Standard",
+                "importance_level": "High",
+                "why_it_matters_en": "Clarifies which state/national laws apply and where disputes will be resolved so you are not forced into distant, expensive courts.",
+                "why_it_matters_kn": "ಯಾವ ಕಾನೂನು ಅನ್ವಯಿಸುತ್ತದೆ ಮತ್ತು ವಿವಾದಗಳನ್ನು ಎಲ್ಲಿ ಇತ್ಯರ್ಥಪಡಿಸಲಾಗುತ್ತದೆ ಎಂಬುದನ್ನು ಸ್ಪಷ್ಟಪಡಿಸುತ್ತದೆ.",
+                "why_it_matters_hi": "यह स्पष्ट करता है कि कौन सा कानून लागू होगा और विवादों का निपटारा किस स्थान पर किया जाएगा।",
+                "recommended_standard_language": "This Agreement shall be governed by the laws of India, with disputes resolved amicably or through mediation/courts at the city of execution."
+            }
         ]
     }
 
@@ -166,8 +232,7 @@ class MissingClauseDetector:
     def detect_missing_clauses(full_text: str, category: str) -> List[Dict[str, Any]]:
         checklist = MissingClauseDetector.CHECKLISTS.get(category)
         if not checklist:
-            # Fallback to general checklist
-            checklist = MissingClauseDetector.CHECKLISTS["Rental / Lease Agreement"]
+            checklist = MissingClauseDetector.CHECKLISTS["General Legal Contract"]
 
         findings = []
         for item in checklist:

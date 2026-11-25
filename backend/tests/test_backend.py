@@ -99,3 +99,70 @@ def test_auth_and_sample_document_flow():
     assert report_resp.status_code == 200
     report_data = report_resp.json()
     assert "download_url" in report_data
+
+
+def test_invalid_jwt_rejected():
+    resp = client.get("/api/v1/documents/", headers={"Authorization": "Bearer invalid.token.here"})
+    assert resp.status_code == 401
+
+
+def test_missing_clauses_loan_and_general():
+    loan_missing = MissingClauseDetector.detect_missing_clauses("Simple loan text.", "Consumer Loan Agreement")
+    assert any("APR" in m["clause_name"] for m in loan_missing)
+    general_missing = MissingClauseDetector.detect_missing_clauses("Simple general contract.", "General Legal Contract")
+    assert any("Liability" in m["clause_name"] for m in general_missing)
+
+
+def test_multiple_risks_same_page_not_dropped():
+    chunks = [
+        {
+            "clause_heading": "Clause 1: Termination A",
+            "page_number": 1,
+            "content": "Company may terminate immediately without notice."
+        },
+        {
+            "clause_heading": "Clause 2: Termination B",
+            "page_number": 1,
+            "content": "Vendor may also terminate forthwith at any time without cause."
+        }
+    ]
+    risks = RiskDetector.analyze_chunks(chunks, "General Legal Contract")
+    assert len(risks) == 2
+
+
+def test_report_generator_escapes_xml_chars(tmp_path):
+    from app.services.report_generator import ReportGenerator
+    out = tmp_path / "special_chars.pdf"
+    pdf_path = ReportGenerator.generate_pdf_report(
+        document_id=999,
+        title="R&D Agreement <2026> & Terms",
+        category="General & Commercial",
+        overall_risk="High",
+        summary_en="Summary with & < > special characters.",
+        obligations=[{"party": "A & B", "obligation": "Pay < 30 days", "deadline": "5th & 10th", "consequence": "Fee > 0"}],
+        risks=[{
+            "severity": "High",
+            "clause_reference": "Clause 1 & 2",
+            "explanation_en": "Risk <high> & penalty.",
+            "legal_rationale": "Section 27 & common law.",
+            "questions_to_ask": ["Can we cap < 10%?"]
+        }],
+        missing_clauses=[{
+            "clause_name": "Liability & Cap",
+            "clause_type": "Standard",
+            "importance_level": "High",
+            "why_it_matters_en": "Protects <party> & assets.",
+            "recommended_standard_language": "Cap <= 100% & fees."
+        }],
+        output_path=str(out)
+    )
+    assert out.exists() and out.stat().st_size > 0
+    assert pdf_path == str(out)
+
+
+def test_upload_rejects_legacy_doc():
+    resp = client.post(
+        "/api/v1/documents/upload",
+        files={"file": ("legacy.doc", b"dummy", "application/msword")}
+    )
+    assert resp.status_code == 400

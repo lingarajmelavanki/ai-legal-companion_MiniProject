@@ -1,4 +1,4 @@
-import shutil
+import uuid
 from pathlib import Path
 from typing import List
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
@@ -14,8 +14,9 @@ from app.services.classifier import DocumentClassifier
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
-ALLOWED_EXTENSIONS = {".pdf", ".docx", ".doc", ".txt", ".png", ".jpg", ".jpeg"}
+ALLOWED_EXTENSIONS = {".pdf", ".docx", ".txt", ".png", ".jpg", ".jpeg"}
 MAX_FILE_SIZE = 25 * 1024 * 1024  # 25 MB
+
 
 @router.post("/upload", response_model=DocumentResponse)
 async def upload_document(
@@ -24,15 +25,20 @@ async def upload_document(
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user)
 ):
-    ext = Path(file.filename).suffix.lower()
+    if not file.filename:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Uploaded file must have a valid filename."
+        )
+
+    safe_filename = Path(file.filename).name
+    ext = Path(safe_filename).suffix.lower()
     if ext not in ALLOWED_EXTENSIONS:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Unsupported file format '{ext}'. Allowed: PDF, DOCX, TXT, PNG, JPG."
         )
 
-    # Save file to disk
-    file_path = settings.UPLOAD_DIR / f"{current_user.id}_{file.filename}"
     contents = await file.read()
     if len(contents) > MAX_FILE_SIZE:
         raise HTTPException(
@@ -40,6 +46,9 @@ async def upload_document(
             detail="File size exceeds 25 MB limit."
         )
 
+    # Save file to disk with a unique prefix to avoid overwrites and path traversal
+    unique_name = f"{current_user.id}_{uuid.uuid4().hex[:12]}_{safe_filename}"
+    file_path = settings.UPLOAD_DIR / unique_name
     with open(file_path, "wb") as f:
         f.write(contents)
 
@@ -47,20 +56,21 @@ async def upload_document(
     try:
         raw_chunks = DocumentExtractor.extract_text_from_file(str(file_path))
     except Exception as e:
+        file_path.unlink(missing_ok=True)
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
             detail=f"Failed to process document: {str(e)}"
         )
 
     full_text = " ".join(c.get("content", "") for c in raw_chunks)
-    detected_category = category or DocumentClassifier.classify(full_text, file.filename)
+    detected_category = category or DocumentClassifier.classify(full_text, safe_filename)
     page_count = max([c.get("page_number", 1) for c in raw_chunks], default=1)
 
     # Create document record
     doc_record = Document(
         user_id=current_user.id,
-        title=Path(file.filename).stem.replace("_", " ").title(),
-        filename=file.filename,
+        title=Path(safe_filename).stem.replace("_", " ").title(),
+        filename=safe_filename,
         file_type=ext.replace(".", ""),
         file_size=len(contents),
         file_path=str(file_path),
@@ -111,11 +121,12 @@ def load_sample_document(
     with open(src_path, "r", encoding="utf-8") as f:
         content = f.read()
 
-    target_path = settings.UPLOAD_DIR / f"{current_user.id}_{filename}"
+    target_path = settings.UPLOAD_DIR / f"{current_user.id}_{uuid.uuid4().hex[:12]}_{filename}"
     with open(target_path, "w", encoding="utf-8") as f:
         f.write(content)
 
     raw_chunks = DocumentExtractor.extract_text_from_file(str(target_path))
+    page_count = max([c.get("page_number", 1) for c in raw_chunks], default=1)
 
     doc_record = Document(
         user_id=current_user.id,
@@ -126,7 +137,7 @@ def load_sample_document(
         file_path=str(target_path),
         category=category,
         status="uploaded",
-        page_count=1,
+        page_count=page_count,
         ocr_applied=0
     )
     db.add(doc_record)

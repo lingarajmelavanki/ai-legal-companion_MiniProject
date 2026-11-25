@@ -99,15 +99,14 @@ export default function ReportPage() {
             <span>Print View</span>
           </button>
 
-          <a
-            href={api.getReportDownloadUrl(documentId)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => api.downloadReport(documentId).catch(() => alert('Failed to download PDF report'))}
             className="px-4 py-1.5 bg-[#173D32] hover:bg-[#315D49] text-[#FFFFFF] rounded text-xs font-semibold flex items-center space-x-1.5 shadow-paper-sm"
           >
             <Download className="w-3.5 h-3.5 text-[#B77B50]" />
             <span>Download PDF Report</span>
-          </a>
+          </button>
         </div>
       </div>
 

@@ -101,15 +101,14 @@ export default function RiskCenterPage() {
             </button>
           </div>
 
-          <a
-            href={api.getReportDownloadUrl(documentId)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => api.downloadReport(documentId).catch(() => alert('Failed to download PDF report'))}
             className="px-3 py-1.5 bg-[#173D32] hover:bg-[#315D49] text-[#FFFFFF] rounded text-xs font-semibold flex items-center space-x-1"
           >
             <Download className="w-3.5 h-3.5 text-[#B77B50]" />
             <span>Export Brief</span>
-          </a>
+          </button>
         </div>
       </div>
 

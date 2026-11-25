@@ -21,6 +21,19 @@ async def send_chat_message(
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found.")
 
+    # Fetch recent conversation history for multi-turn context
+    recent_msgs = (
+        db.query(ChatMessage)
+        .filter(ChatMessage.document_id == doc.id)
+        .order_by(ChatMessage.created_at.desc())
+        .limit(6)
+        .all()
+    )
+    history_data = [
+        {"role": m.role, "content": m.content}
+        for m in reversed(recent_msgs)
+    ]
+
     # Record user message
     user_msg = ChatMessage(
         document_id=doc.id,
@@ -47,6 +60,7 @@ async def send_chat_message(
     answer, citations = await AIEngine.chat_rag(
         chunks=chunks_data,
         query=payload.message,
+        history=history_data,
         language=payload.language or "en"
     )
 

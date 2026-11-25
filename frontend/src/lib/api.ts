@@ -169,5 +169,21 @@ export const api = {
 
   getReportDownloadUrl(documentId: number): string {
     return `${API_BASE}/reports/${documentId}/download`;
+  },
+
+  async downloadReport(documentId: number): Promise<void> {
+    const res = await fetch(`${API_BASE}/reports/${documentId}/download`, {
+      headers: { ...getAuthHeader() },
+    });
+    if (!res.ok) throw new Error('Failed to download report');
+    const blob = await res.blob();
+    const url = window.URL.createObjectURL(blob);
+    const a = window.document.createElement('a');
+    a.href = url;
+    a.download = `LEXORA_Analysis_${documentId}.pdf`;
+    window.document.body.appendChild(a);
+    a.click();
+    a.remove();
+    window.URL.revokeObjectURL(url);
   }
 };

@@ -32,7 +32,7 @@ flowchart TD
     end
 
     subgraph AI ["AI Engine & Knowledge Base"]
-        Gemini["Google Gemini API (1.5 Flash / 2.0)"]
+        Gemini["Google Gemini API (2.5 Flash)"]
         LegalRules["Deterministic Legal Heuristics Engine"]
         Checklists["Category-Specific Statutory Checklists"]
     end
@@ -86,6 +86,8 @@ flowchart TD
   - **Rental / Lease**: 24-hour advance inspection notice, security deposit refund timeline & deductions audit, major structural repair division, mutual termination notice, and force majeure.
   - **Employment & Bonds**: Clear probation duration and written confirmation, personal IP carve-out, standard working hours & overtime, and PoSH Act grievance redressal.
   - **Non-Disclosure Agreements (NDA)**: Standard public domain/subpoena exceptions, sunset expiry term (2-3 years), and return/destruction protocols.
+  - **Consumer Loan Agreements**: Transparent APR & fee disclosure, prepayment/foreclosure penalty caps, and default grace/cure periods.
+  - **General Contracts**: Mutual termination notice, limitation of liability caps, and governing law/dispute venue.
 - Distinguishes **Statutory Mandatory Protections** from **Commercial Recommendations**.
 - Provides copy-pasteable recommended standard boilerplate clauses to negotiate into the agreement.
 
@@ -113,7 +115,7 @@ flowchart TD
 - **Frontend**: Next.js 14 (App Router), React 18, TypeScript, Tailwind CSS, Lucide React icons, Framer Motion.
 - **Backend**: FastAPI, Python 3.12, Pydantic v2, SQLAlchemy, Uvicorn.
 - **Document Processing**: PyMuPDF (`fitz`), `python-docx`, Pillow.
-- **AI & RAG**: Google Gemini API (`gemini-1.5-flash`), custom TF-IDF grounded vector retrieval, deterministic legal heuristics engine.
+- **AI & RAG**: Google Gemini API (`gemini-2.5-flash`), custom TF-IDF grounded vector retrieval, deterministic legal heuristics engine.
 - **Reports**: ReportLab PDF Generation engine.
 - **Database**: SQLite (default zero-config) / PostgreSQL with `pgvector` compatibility.
 
@@ -131,15 +133,16 @@ Double-click `run_lexora.bat` or run:
 
 #### 1. Backend Setup
 ```powershell
-# Activate Python virtual environment
+# Create and activate Python virtual environment
+py -3.12 -m venv venv
 .\venv\Scripts\Activate.ps1
 
 # Install dependencies
 pip install -r backend\requirements.txt
 
-# Run integration tests
+# Run unit & API tests
 $env:PYTHONPATH="backend"
-python backend\tests\run_tests.py
+pytest backend\tests\test_backend.py -v
 
 # Launch Backend API server
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
@@ -160,7 +163,7 @@ npm run dev
 ## 5. Docker Deployment
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 - Frontend: `http://localhost:3000`
 - Backend API: `http://localhost:8000`

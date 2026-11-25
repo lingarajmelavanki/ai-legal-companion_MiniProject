@@ -26,7 +26,7 @@ class DocumentExtractor:
 
         if ext == ".pdf":
             return DocumentExtractor._extract_pdf(file_path)
-        elif ext in [".docx", ".doc"]:
+        elif ext == ".docx":
             return DocumentExtractor._extract_docx(file_path)
         elif ext in [".txt", ".md"]:
             return DocumentExtractor._extract_txt(file_path)
@@ -38,28 +38,32 @@ class DocumentExtractor:
     @staticmethod
     def _extract_pdf(file_path: str) -> List[Dict[str, Any]]:
         chunks = []
-        doc = fitz.open(file_path)
-        
-        for page_idx in range(len(doc)):
-            page = doc[page_idx]
-            page_num = page_idx + 1
-            raw_text = page.get_text("text")
-            
-            if not raw_text.strip():
-                continue
-                
-            page_chunks = DocumentExtractor._segment_text_into_clauses(raw_text, page_num)
-            chunks.extend(page_chunks)
-            
-        doc.close()
-        
-        # If PDF was scanned and had no direct text, provide helpful placeholder chunk
+        with fitz.open(file_path) as doc:
+            for page_idx in range(len(doc)):
+                page = doc[page_idx]
+                page_num = page_idx + 1
+                raw_text = page.get_text("text")
+
+                if not raw_text.strip():
+                    continue
+
+                page_chunks = DocumentExtractor._segment_text_into_clauses(raw_text, page_num)
+                chunks.extend(page_chunks)
+
+        # If PDF was scanned and had no embedded text, attempt Gemini Vision OCR if configured
         if not chunks:
+            ocr_text = DocumentExtractor._ocr_with_gemini_pdf(file_path)
+            if ocr_text:
+                return DocumentExtractor._segment_text_into_clauses(ocr_text, page_number=1)
             chunks.append({
                 "page_number": 1,
-                "clause_heading": "Document Overview",
-                "content": "Document text extracted via OCR visual inspection.",
-                "cleaned_content": "Document text extracted via OCR visual inspection."
+                "clause_heading": "Scanned Document Notice",
+                "content": (
+                    "This PDF appears to be a scanned image without embedded selectable text. "
+                    "Configure GEMINI_API_KEY in .env to enable automatic Vision OCR extraction, "
+                    "or upload a text-selectable PDF/DOCX/TXT file."
+                ),
+                "cleaned_content": "Scanned PDF without selectable text."
             })
         return chunks
 
@@ -69,8 +73,14 @@ class DocumentExtractor:
         full_text = []
         for para in doc.paragraphs:
             if para.text.strip():
-                full_text.append(para.text)
-        
+                full_text.append(para.text.strip())
+
+        for table in doc.tables:
+            for row in table.rows:
+                row_text = " | ".join(cell.text.strip() for cell in row.cells if cell.text.strip())
+                if row_text:
+                    full_text.append(row_text)
+
         combined_text = "\n\n".join(full_text)
         return DocumentExtractor._segment_text_into_clauses(combined_text, page_number=1)
 
@@ -82,16 +92,77 @@ class DocumentExtractor:
 
     @staticmethod
     def _extract_image(file_path: str) -> List[Dict[str, Any]]:
-        img = Image.open(file_path)
-        width, height = img.size
-        # Provide image container chunk
-        info_text = f"[OCR Image Document: Dimensions {width}x{height}px. Document visual processed.]"
+        with Image.open(file_path) as img:
+            width, height = img.size
+
+        ocr_text = DocumentExtractor._ocr_with_gemini_image(file_path)
+        if ocr_text:
+            return DocumentExtractor._segment_text_into_clauses(ocr_text, page_number=1)
+
+        info_text = (
+            f"[Image Document ({width}x{height}px): No embedded text layer. "
+            f"Configure GEMINI_API_KEY in .env to enable Vision OCR text extraction.]"
+        )
         return [{
             "page_number": 1,
             "clause_heading": "Visual Document Analysis",
             "content": info_text,
             "cleaned_content": info_text
         }]
+
+    @staticmethod
+    def _ocr_with_gemini_image(file_path: str) -> str:
+        """Uses Gemini Vision API for OCR when GEMINI_API_KEY is configured."""
+        import base64
+        import mimetypes
+        import httpx
+        from app.core.config import settings
+
+        if not settings.GEMINI_API_KEY:
+            return ""
+        mime_type, _ = mimetypes.guess_type(file_path)
+        mime_type = mime_type or "image/png"
+        try:
+            b64 = base64.b64encode(Path(file_path).read_bytes()).decode("ascii")
+            url = f"https://generativelanguage.googleapis.com/v1beta/models/{settings.DEFAULT_LLM_MODEL}:generateContent?key={settings.GEMINI_API_KEY}"
+            payload = {
+                "contents": [{
+                    "parts": [
+                        {"text": "Transcribe all text from this legal document image verbatim, preserving clause numbers and headings."},
+                        {"inline_data": {"mime_type": mime_type, "data": b64}}
+                    ]
+                }],
+                "generationConfig": {"temperature": 0.0, "maxOutputTokens": 4096}
+            }
+            with httpx.Client(timeout=30.0) as client:
+                resp = client.post(url, json=payload)
+                if resp.status_code == 200:
+                    data = resp.json()
+                    return data.get("candidates", [{}])[0].get("content", {}).get("parts", [{}])[0].get("text", "").strip()
+        except Exception:
+            pass
+        return ""
+
+    @staticmethod
+    def _ocr_with_gemini_pdf(file_path: str) -> str:
+        """Renders first few pages of a scanned PDF to PNG and runs Gemini Vision OCR."""
+        from app.core.config import settings
+        if not settings.GEMINI_API_KEY:
+            return ""
+        import tempfile
+        texts = []
+        try:
+            with fitz.open(file_path) as doc:
+                for page_idx in range(min(len(doc), 5)):
+                    pix = doc[page_idx].get_pixmap(dpi=150)
+                    with tempfile.NamedTemporaryFile(suffix=".png", delete=True) as tmp:
+                        pix.save(tmp.name)
+                        page_text = DocumentExtractor._ocr_with_gemini_image(tmp.name)
+                        if page_text:
+                            texts.append(page_text)
+        except Exception:
+            pass
+        return "\n\n".join(texts)
 
     @staticmethod
     def _segment_text_into_clauses(text: str, page_number: int) -> List[Dict[str, Any]]:

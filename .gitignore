@@ -4,6 +4,8 @@
 !.env.example
 *.pem
 *.key
+.lexora_secret
+backend/.lexora_secret
 
 # Local Databases
 *.db

@@ -141,11 +141,11 @@ class RiskDetector:
                     ]
                 })
 
-        # Ensure we don't duplicate identical findings
+        # Ensure we don't duplicate identical findings within the same clause
         unique_findings = []
         seen = set()
         for f in findings:
-            key = (f["category"], f["page_number"])
+            key = (f["category"], f["page_number"], f["clause_reference"], f["original_text"][:80])
             if key not in seen:
                 seen.add(key)
                 unique_findings.append(f)

@@ -18,18 +18,24 @@ class DocumentSimplifier:
 
     @staticmethod
     def simplify(full_text: str, category: str, chunks: List[Dict[str, Any]]) -> Dict[str, Any]:
-        # 1. Detect ambiguous terms
+        # 1. Detect ambiguous terms (collect up to 2 distinct occurrences per pattern)
         unclear_terms = []
+        seen_contexts = set()
         for term, why in DocumentSimplifier.AMBIGUOUS_PATTERNS:
-            match = re.search(r'([^.\n]*?' + re.escape(term) + r'[^.\n]*)', full_text, re.I)
-            if match:
+            for match in re.finditer(r'([^.\n]*?' + re.escape(term) + r'[^.\n]*)', full_text, re.I):
                 context_snippet = match.group(1).strip()
+                key = (term, context_snippet[:60].lower())
+                if key in seen_contexts:
+                    continue
+                seen_contexts.add(key)
                 unclear_terms.append({
                     "term": term,
                     "context": context_snippet[:200] + ("..." if len(context_snippet) > 200 else ""),
                     "why_unclear": why,
-                    "suggested_clarification": f"Replace with measurable, objective metrics or add 'reasonable mutual agreement'."
+                    "suggested_clarification": "Replace with measurable, objective metrics or add 'reasonable mutual agreement'."
                 })
+                if len([u for u in unclear_terms if u["term"] == term]) >= 2:
+                    break
 
         # 2. Extract key obligations
         obligations = DocumentSimplifier._extract_obligations(full_text, category)

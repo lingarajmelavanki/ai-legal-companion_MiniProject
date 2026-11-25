@@ -88,6 +88,14 @@ class AIEngine:
                     for c in relevant_chunks
                 )
 
+                history_block = ""
+                if history:
+                    recent_turns = "\n".join(
+                        f"{m.get('role', 'user').upper()}: {m.get('content', '')}"
+                        for m in history[-6:]
+                    )
+                    history_block = f"RECENT CONVERSATION:\n{recent_turns}\n\n"
+
                 prompt = (
                     f"You are LEXORA, an expert citizen legal intelligence companion.\n"
                     f"Answer the user's question STRICTLY based on the provided document excerpts.\n"
@@ -95,6 +103,7 @@ class AIEngine:
                     f"Provide response in language: {language} (en=English, kn=Kannada, hi=Hindi).\n"
                     f"Include specific references to the relevant clause names and page numbers.\n\n"
                     f"DOCUMENT EXCERPTS:\n{context_passages}\n\n"
+                    f"{history_block}"
                     f"USER QUESTION: {query}"
                 )
 
@@ -107,16 +116,23 @@ class AIEngine:
                     resp = await client.post(url, json=payload)
                     if resp.status_code == 200:
                         data = resp.json()
-                        text = data["candidates"][0]["content"]["parts"][0]["text"]
-                        citations = [
-                            {
-                                "page_number": c.get("page_number", 1),
-                                "clause_heading": c.get("clause_heading", "Excerpt"),
-                                "snippet": c.get("content", "")[:180] + "..."
-                            }
-                            for c in relevant_chunks
-                        ]
-                        return text, citations
+                        text = (
+                            data.get("candidates", [{}])[0]
+                            .get("content", {})
+                            .get("parts", [{}])[0]
+                            .get("text", "")
+                            .strip()
+                        )
+                        if text:
+                            citations = [
+                                {
+                                    "page_number": c.get("page_number", 1),
+                                    "clause_heading": c.get("clause_heading", "Excerpt"),
+                                    "snippet": c.get("content", "")[:180] + "..."
+                                }
+                                for c in relevant_chunks
+                            ]
+                            return text, citations
             except Exception as e:
                 logger.warning(f"Gemini live chat call failed, falling back to grounded RAG engine: {e}")
 

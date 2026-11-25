@@ -189,15 +189,14 @@ export default function AnalysisStudioPage() {
             <span>{analyzing ? 'Auditing...' : 'Re-Analyze'}</span>
           </button>
 
-          <a
-            href={api.getReportDownloadUrl(document.id)}
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            type="button"
+            onClick={() => api.downloadReport(document.id).catch(() => alert('Failed to download PDF report'))}
             className="px-3 py-1.5 bg-[#173D32] hover:bg-[#315D49] text-[#FFFFFF] rounded text-xs font-semibold flex items-center space-x-1 shadow-paper-sm"
           >
             <Download className="w-3.5 h-3.5 text-[#B77B50]" />
             <span>Download PDF Brief</span>
-          </a>
+          </button>
         </div>
       </div>
 
