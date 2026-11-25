@@ -1,0 +1,1 @@
+# ai-legal-companion_MiniProject
